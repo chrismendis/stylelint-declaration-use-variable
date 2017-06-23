@@ -61,7 +61,7 @@ Passing a regex will watch the variable usage for all matching properties. This 
 
 #### Custom function support
 
-Passing an object with properties `comparison` and `functionNames` will check the variable *or* custom function usage for all matching properties of `comparison`.
+Passing an object with properties `props` and `functionNames` will check the variable *or* custom function usage for all matching properties of `props`.
 
 ```js
 // .stylelintrc
