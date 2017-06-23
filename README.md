@@ -1,33 +1,33 @@
-# stylelint-declaration-use-variable
+# stylelint-declaration-use-variable-or-custom-fn
 
-[![Build Status](https://travis-ci.org/sh-waqar/stylelint-declaration-use-variable.svg?branch=master)](https://travis-ci.org/sh-waqar/stylelint-declaration-use-variable)
+[![Build Status](https://travis-ci.org/chrismendis/stylelint-declaration-use-variable.svg?branch=master)](https://travis-ci.org/chrismendis/stylelint-declaration-use-variable)
 
-A [stylelint](https://github.com/stylelint/stylelint) plugin that check the use of scss, less or custom css variable on declaration. Either used with '$', map-get(), '@' or 'var(--var-name)'.
+A [stylelint](https://github.com/stylelint/stylelint) plugin that check the use of scss, less or custom css variable on declaration. Either used with '$', map-get(), '@', 'var(--var-name)', or with a user-specified custom function(s).
 
 ## Installation
 
 ```
-npm install stylelint-declaration-use-variable
+npm install stylelint-declaration-use-variable-or-palette
 ```
 
-Be warned: v0.2.0+ is only compatible with stylelint v3+. For earlier version of stylelint, use earlier versions of this.
+Be warned: v1.0.0+ is only compatible with stylelint v3+.
 
 ## Usage
 
-Add it to your stylelint config `plugins` array, then add `"declaration-use-variable"` to your rules,
+Add it to your stylelint config `plugins` array, then add `"declaration-use-variable-or-custom-fn"` to your rules,
 specifying the property for which you want to check the usage of variable.
 
-Like so:
+Basic usage:
 
 ```js
 // .stylelintrc
 {
   "plugins": [
-    "stylelint-declaration-use-variable"
+    "stylelint-declaration-use-variable-or-custom-fn"
   ],
   "rules": {
     // ...
-    "sh-waqar/declaration-use-variable": "color",
+    "chrismendis/declaration-use-variable-or-custom-fn": "color",
     // ...
   }
 }
@@ -41,7 +41,7 @@ Multiple properties can be watched by passing them inside array. Regex can also 
 // .stylelintrc
 "rules": {
   // ...
-  "sh-waqar/declaration-use-variable": [["/color/", "z-index", "font-size"]],
+  "chrismendis/declaration-use-variable-or-custom-fn": [["/color/", "z-index", "font-size"]],
   // ...
 }
 ```
@@ -54,7 +54,20 @@ Passing a regex will watch the variable usage for all matching properties. This 
 // .stylelintrc
 "rules": {
   // ...
-  "sh-waqar/declaration-use-variable": "/color/",
+  "chrismendis/declaration-use-variable-or-custom-fn": "/color/",
+  // ...
+}
+```
+
+#### Custom function support
+
+Passing an object with properties `comparison` and `functionNames` will check the variable *or* custom function usage for all matching properties of `comparison`.
+
+```js
+// .stylelintrc
+"rules": {
+  // ...
+  "chrismendis/declaration-use-variable-or-custom-fn": {comparison: "color", functionNames: ["myCustomFn"]},
   // ...
 }
 ```

@@ -39,3 +39,15 @@ testRule(['/color/', 'font-size', 'z-index'], function(tr) {
     tr.notOk('.foo { color: blue; }', messages.expected('color'));
     tr.notOk('.foo { z-index: 11; }', messages.expected('z-index'));
 });
+
+// Test for user-specified color functions
+testRule({props: ['/color/', 'z-index'], functionNames: ['palette']}, function(tr) {
+    tr.ok('.foo { color: @blue; }');
+    tr.ok('.foo { z-index: --foo; }');
+    tr.ok('.foo { color: var(--var-name); }');
+    tr.ok('.foo { color: color($blue shade(10%)); }');
+    tr.ok('.foo { color: palette(Red, 700); }');
+    tr.ok('.foo { background-color: palette(Purple, 500); }');
+    tr.notOk('.foo { color: blue; }', messages.expected('color'));
+    tr.notOk('.foo { z-index: 11; }', messages.expected('z-index'));
+});

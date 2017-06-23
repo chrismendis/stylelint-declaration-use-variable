@@ -1,13 +1,13 @@
 var stylelint = require('stylelint');
 
-var ruleName = 'sh-waqar/declaration-use-variable';
+var ruleName = 'chrismendis/declaration-use-variable-or-custom-fn';
 
 var messages = stylelint.utils.ruleMessages(ruleName, {
     expected: function expected(property) {
-        return 'Expected variable for \"' + property + '\".';
+        return 'Expected a variable or function for \"' + property + '\".';
     },
     expectedPresent: function expectedPresent(property, variable) {
-        return 'Expected variable ' + variable + ' for \"' + property + '\".';
+        return 'Expected a variable (maybe ' + variable + ') or function for \"' + property + '\".';
     }
 });
 
@@ -21,13 +21,19 @@ var variables = {};
  * @param  {string} val
  * @return {bool}
  */
-function checkValue(val) {
+function checkValue(val, functionNames) {
     // Regex for checking
     // scss variable starting with '$'
     // map-get function in scss
     // less variable starting with '@'
     // custom properties starting with '--' or 'var'
-    var regEx = /^(\$)|(map-get)|(\@)|(--)|(var)/g;
+    // user-specified function names
+    // var regEx = /^(\$)|(map-get)|(\@)|(--)|(var)|(palette)/g;
+    functionNames = functionNames || [];
+    var preparedFnNames = functionNames.map(function (name, i) {
+      return (i === 0 ? "|(" : "(") + name + ")"
+    });
+    var regEx = new RegExp("^(\\$)|(map-get)|(\\@)|(--)|(var)" + preparedFnNames.join("|"), "g");
 
     // color functions starting with 'color('
     if (val.indexOf('color(') > -1) {
@@ -39,7 +45,7 @@ function checkValue(val) {
 /**
  * Checks the value and if its present in variables object
  * returns the respective variable
- * 
+ *
  * @param  {string}
  * @return {string|bool}
  */
@@ -55,14 +61,14 @@ function checkPresentVariable(val) {
  * @param  {string|regex} comparison
  * @return {bool}
  */
-function testAgaintString(prop, value, comparison) {
+function testAgaintString(prop, value, comparison, functionNames) {
     var comparisonIsRegex = comparison[0] === "/" && comparison[comparison.length - 1] === "/";
 
     // if prop is a variable do not run check
     // and add it in the variables object for later check
     // and return, since it would be a variable declaration
     // not a style property declaration
-    if (checkValue(prop)) {
+    if (checkValue(prop, functionNames)) {
         variables[value] = prop;
         return;
     }
@@ -82,14 +88,14 @@ function testAgaintString(prop, value, comparison) {
  * @param  {string|array} comparison
  * @return {bool}
  */
-function checkProp(prop, value, comparison) {
+function checkProp(prop, value, comparison, functionNames) {
     if (Array.isArray(comparison)) {
         for (var input of comparison) {
-            if (testAgaintString(prop, value, input)) return true;
+            if (testAgaintString(prop, value, input, functionNames)) return true;
         }
         return false;
     } else {
-        return testAgaintString(prop, value, comparison);
+        return testAgaintString(prop, value, comparison, functionNames);
     }
 }
 
@@ -107,15 +113,19 @@ module.exports = stylelint.createPlugin(ruleName, function(options) {
             return;
         }
 
+        var hasSimpleOptions = Array.isArray(options) || typeof options === "string";
+        var comparison = hasSimpleOptions ? options : options.props;
+        var functionNames = hasSimpleOptions ? [] : options.functionNames;
+
         root.walkDecls(function(statement) {
-            if (checkProp(statement.prop, statement.value, options)  && checkPresentVariable(statement.value) && !checkValue(statement.value)) {
+            if (checkProp(statement.prop, statement.value, comparison, functionNames)  && checkPresentVariable(statement.value) && !checkValue(statement.value, functionNames)) {
                 stylelint.utils.report({
                     ruleName: ruleName,
                     result: result,
                     node: statement,
                     message: messages.expectedPresent(statement.prop, checkPresentVariable(statement.value))
                 });
-            } else if (checkProp(statement.prop, statement.value, options) && !checkValue(statement.value)) {
+            } else if (checkProp(statement.prop, statement.value, comparison, functionNames) && !checkValue(statement.value, functionNames)) {
                 stylelint.utils.report({
                     ruleName: ruleName,
                     result: result,

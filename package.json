@@ -1,14 +1,14 @@
 {
-  "name": "stylelint-declaration-use-variable",
-  "version": "1.6.0",
-  "description": "A stylelint custom rule to check the use of scss variable on declaration.",
+  "name": "stylelint-declaration-use-variable-or-custom-fn",
+  "version": "1.0.0",
+  "description": "A stylelint custom rule to check the use of scss variable or custom function on declaration.",
   "main": "index.js",
   "scripts": {
     "test": "tape test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sh-waqar/stylelint-declaration-use-variable.git"
+    "url": "git+https://github.com/chrismendis/stylelint-declaration-use-variable.git"
   },
   "keywords": [
     "stylelint",
@@ -19,12 +19,12 @@
     "z-index",
     "color"
   ],
-  "author": "sh-waqar <waqar.ali911@gmail.com>",
+  "author": "chrismendis <chris.mendis@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/sh-waqar/stylelint-declaration-use-variable/issues"
+    "url": "https://github.com/chrismendis/stylelint-declaration-use-variable/issues"
   },
-  "homepage": "https://github.com/sh-waqar/stylelint-declaration-use-variable",
+  "homepage": "https://github.com/chrismendis/stylelint-declaration-use-variable",
   "devDependencies": {
     "tape": "^4.2.2"
   },
